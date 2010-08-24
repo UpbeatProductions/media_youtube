@@ -18,6 +18,16 @@
  * Implement hook_menu().
  */
 function media_youtube_menu() {
+	
+  $items['admin/config/media/media_youtube'] = array(
+    'title' => 'YouTube settings',
+    'description' => 'Configure required settings for Media: YouTube.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('media_youtube_settings_form'),
+    'access arguments' => array('administer media'),
+    'file' => 'media_youtube.admin.inc',
+  );
+
   $items['media/add/media_youtube'] = array(
     'title' => 'Add media from YouTube',
     'page callback' => 'drupal_get_form',

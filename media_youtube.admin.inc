@@ -7,10 +7,43 @@
  */
 
 /**
+ * Callback for /admin/config/media/media_youtube.
+ */
+function media_youtube_settings_form() {
+  $form = array();
+  $form['api'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('YouTube API'),
+    '#description' => t('You will first need to obtain an <a href="@youtube">API Developer Key</a>.', array('@youtube' => 'http://code.google.com/apis/youtube/dashboard/')),
+    '#collapsible' => TRUE,
+    '#collapsed' => (variable_get('media_youtube_api_key', '') != ''),
+  );
+  $form['api']['media_youtube_api_key'] = array(
+    '#type' => 'textfield',
+    '#title' => t('YouTube API Key'),
+    '#default_value' => variable_get('media_youtube_api_key', ''),
+    '#description' => t('Please enter your YouTube Developer Key here.'),
+  );
+  $form['api']['media_youtube_username'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Username'),
+    '#default_value' => variable_get('media_youtube_username', ''),
+    '#description' => t('Your YouTube username'),
+  );
+  $form['api']['media_youtube_password'] = array(
+    '#type' => 'password',
+    '#title' => t('Password'),
+    '#default_value' => variable_get('media_youtube_password', ''),
+    '#description' => t('Your YouTube password'),
+  );
+  return system_settings_form($form);
+}
+
+/**
  *  Callback for /media/add/media_youtube/upload
  */
 function media_youtube_upload() {
-  if($_GET['status'] == '200' && isset($_GET['id']) && strlen($_GET['id']) > 0) {
+  if(isset($_GET['status']) && $_GET['status'] == '200' && isset($_GET['id']) && strlen($_GET['id']) > 0) {
 	$uri = 'youtube://' . 'v/' . $_GET['id'];
     // Check to see if this a duplicate of an existing file
     $files = file_load_multiple(NULL, array('uri' => $uri));
@@ -165,9 +198,9 @@ function media_youtube_add_submit($form, &$form_state) {
 	  // get authentication token
       $url_auth = 'https://www.google.com/youtube/accounts/ClientLogin';
       $url_token = 'http://gdata.youtube.com/action/GetUploadToken';
-      $username = 'chaptermedia';
-      $password = 'tatt00tatt00';
-      $developer_key = 'AI39si6R6aDmdDejMYuIyfBxhLWY_rGn3Iu6iUd9S6Lam703eXPnQT72YeR6ouIJiuAudT2NLNTJrs7iK3crPF2vAMowQL0TmA';
+      $username = variable_get('media_youtube_username', '');
+      $password = variable_get('media_youtube_password', '');
+      $developer_key = variable_get('media_youtube_api_key', '');
 
       $ch = curl_init($url_auth);
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
